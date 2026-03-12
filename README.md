@@ -280,6 +280,8 @@ cd data_models/dbt && dbt test
 ## Documentation
 
 - [Architecture](architecture/system_architecture.md)
+- [Knowledge Foundation](docs/knowledge/KNOWLEDGE_FOUNDATION.md)
+- [Collaboration & Stakeholders](docs/knowledge/COLLABORATION_AND_STAKEHOLDERS.md)
 - [Pipeline Specs](docs/pipelines/README.md)
 - [Data Models](docs/data_models/README.md)
 - [Setup Guide](docs/setup.md)
