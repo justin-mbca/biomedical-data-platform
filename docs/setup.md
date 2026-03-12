@@ -21,6 +21,7 @@ pip install -r requirements.txt
 ```bash
 cd infrastructure
 docker-compose up -d
+# or: cd infrastructure/docker && docker-compose up -d
 ```
 
 This starts:
@@ -29,17 +30,24 @@ This starts:
 - **PostgreSQL** (port 5432) — Airflow metadata
 - **Airflow** webserver (port 8080) — login: admin/admin
 
-### 3. Run a Pipeline Locally
+### 3. Generate Sample Data & Run Pipelines
 
 ```bash
-# FHIR ingestion (requires a FHIR endpoint or sample bundle)
-python -m pipelines.fhir_ingestion.run --config config/fhir_demo.yaml
+# Generate sample data
+python scripts/generate_rna_seq_sample.py
+python scripts/generate_synthetic_oncology.py
+
+# FHIR ingestion (use sample bundle - no server needed)
+python -m pipelines.fhir_ingestion.run --source config/sample_fhir_bundle.json
 
 # Genomics (requires a VCF file)
 python -m pipelines.genomics.variant_pipeline --input path/to/variants.vcf.gz --output data/genomics
 
 # RAG index build
 python -m pipelines.rag.build_index --sources docs/guidelines/ --output data/rag_index
+
+# Analytics dashboard
+streamlit run apps/analytics_dashboard/app.py
 ```
 
 ## Environment Variables
@@ -53,16 +61,17 @@ python -m pipelines.rag.build_index --sources docs/guidelines/ --output data/rag
 
 ## Airflow DAGs
 
-DAGs are in `orchestration/dags/`. After starting docker-compose:
+DAGs are in `orchestration/airflow/dags/` (or `orchestration/dags/`). After starting docker-compose:
 
 1. Open http://localhost:8080
-2. Unpause `fhir_ingestion`, `genomics_variant_pipeline`, or `rag_knowledge_index`
+2. Unpause `fhir_ingestion`, `genomics_variant_pipeline`, `rag_knowledge_index`, or `rna_seq_snakemake`
 3. Trigger runs manually or wait for schedule
 
 ## dbt
 
 ```bash
-cd dbt
+cd data_models/dbt
+# or: cd dbt
 dbt deps
 dbt run
 dbt test
@@ -73,8 +82,10 @@ Configure `~/.dbt/profiles.yml` to point to your OMOP database or DuckDB/Spark a
 ## Great Expectations
 
 ```bash
-python data_quality/run_validation.py --data data/omop/person.parquet
+python data_quality/run_validation.py --data data/omop/person.parquet --suite person_suite
 ```
+
+Suites: `person_suite`, `schema_drift_suite`, `null_rate_suite`, `data_freshness_suite`
 
 ## Troubleshooting
 
