@@ -281,6 +281,7 @@ cd data_models/dbt && dbt test
 
 - [Architecture](architecture/system_architecture.md)
 - [Setup Steps](docs/SETUP_STEPS.md) — Complete step-by-step setup guide
+- [Real-World Data Integrations](docs/data_sources/REAL_WORLD_INTEGRATIONS.md) — Calico, Epic, TCGA, etc.
 - [Knowledge Foundation](docs/knowledge/KNOWLEDGE_FOUNDATION.md)
 - [Collaboration & Stakeholders](docs/knowledge/COLLABORATION_AND_STAKEHOLDERS.md)
 - [Pipeline Specs](docs/pipelines/README.md)
