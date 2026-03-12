@@ -1,21 +1,63 @@
 # Biomedical Data Platform
 
-A senior-level data engineering portfolio project demonstrating end-to-end capabilities in healthcare, genomics, and AI. This platform integrates FHIR healthcare data, OMOP clinical models, bioinformatics pipelines, and AI/RAG systems into a modern, scalable architecture.
+A senior-level data engineering portfolio project demonstrating end-to-end capabilities in **healthcare data engineering**, **genomics/bioinformatics pipelines**, and **AI/RAG systems**. Built with production-ready architecture, modern data engineering best practices, and professional documentation.
 
 [![CI](https://github.com/justin-mbca/biomedical-data-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/justin-mbca/biomedical-data-platform/actions)
 
-## Overview
+---
+
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Architecture](#architecture)
+- [Technology Stack](#technology-stack)
+- [Repository Structure](#repository-structure)
+- [Data Pipelines](#data-pipelines)
+- [Installation Instructions](#installation-instructions)
+- [Usage Examples](#usage-examples)
+- [Example Workflow](#example-workflow)
+- [Data Quality & Testing](#data-quality--testing)
+- [Future Improvements](#future-improvements)
+
+---
+
+## Project Overview
 
 The Biomedical Data Platform provides:
 
 - **Healthcare data ingestion** — FHIR R4 → OMOP CDM via configurable pipelines
-- **Genomics processing** — Variant calling, annotation, and clinical interpretation
+- **Genomics processing** — VCF variant calling, annotation, and clinical interpretation
+- **RNA-Seq analysis** — Snakemake pipeline: QC, DESeq2, volcano plots
 - **AI/RAG knowledge system** — Vector-store powered clinical decision support
 - **Feature store** — Feast for ML feature management
-- **Data quality** — Great Expectations for validation
+- **Data quality** — Great Expectations (schema drift, null rate, freshness)
 - **Orchestration** — Apache Airflow for pipeline scheduling
 
+---
+
 ## Architecture
+
+### System Data Flow
+
+```mermaid
+graph TD
+    A[FHIR API] --> B[Kafka]
+    B --> C[Spark ETL]
+    C --> D[Delta Lake]
+    D --> E[dbt Transformations]
+    E --> F[Analytics Warehouse]
+    F --> G[AI / ML Models]
+    
+    H[VCF / Genomics] --> C
+    I[HL7 Messages] --> B
+    
+    D --> J[Vector DB]
+    J --> K[RAG Pipeline]
+    F --> G
+    K --> G
+```
+
+### High-Level View
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -28,141 +70,230 @@ The Biomedical Data Platform provides:
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-See [docs/architecture/README.md](docs/architecture/README.md) for detailed Mermaid diagrams.
+See [architecture/system_architecture.md](architecture/system_architecture.md) and [docs/architecture/README.md](docs/architecture/README.md) for detailed diagrams.
+
+---
 
 ## Technology Stack
 
-| Layer | Technology |
-|-------|------------|
-| **Messaging** | Apache Kafka (or GCP Pub/Sub) |
+| Category | Technology |
+|----------|------------|
+| **Languages** | Python, SQL, R |
+| **Messaging** | Apache Kafka, GCP Pub/Sub |
 | **Batch processing** | Apache Spark |
 | **Storage** | Delta Lake, Parquet, PostgreSQL |
 | **Orchestration** | Apache Airflow |
 | **Transformation** | dbt |
 | **Data quality** | Great Expectations |
 | **Feature store** | Feast |
-| **Vector DB** | Qdrant / Pinecone / pgvector |
+| **Vector DB** | Qdrant, pgvector |
 | **Containerization** | Docker, Docker Compose |
+| **IaC** | Terraform |
+| **Orchestration (cloud)** | Kubernetes |
 | **CI/CD** | GitHub Actions |
+
+**Core stack:** Python · Apache Spark · Airflow · Delta Lake · Kafka · dbt · Great Expectations · Docker
+
+---
 
 ## Repository Structure
 
 ```
 biomedical-data-platform/
-├── docs/                    # Documentation
-│   ├── architecture/       # Diagrams, design decisions
-│   ├── pipelines/           # Pipeline specifications
-│   ├── data_models/        # FHIR, OMOP, genomics schemas
-│   └── source_repos.md    # Origin of integrated code
-├── pipelines/              # Pipeline implementations
-│   ├── fhir_ingestion/     # FHIR → OMOP
-│   ├── genomics/          # Variant processing
-│   ├── rna_seq/           # RNA-Seq QC, DESeq2, volcano (bioinformatics_pipeline)
-│   ├── rag/               # RAG knowledge pipeline
-│   └── ml/                 # Feast feature store
-├── workflows/snakemake/    # Snakemake RNA-Seq workflow
-├── apps/analytics_dashboard/  # Streamlit oncology/RWD dashboard
-├── orchestration/          # Airflow DAGs
-├── dbt/                    # dbt transformations
-├── scripts/                # Data generation, utilities
-├── infrastructure/        # Docker, CI/CD
-├── data_quality/           # Great Expectations
-├── tests/
-└── src/                    # FHIR/OMOP mapper, fetch, LLM
+├── architecture/              # System architecture diagrams
+├── docs/                      # Documentation
+│   ├── architecture/         # Mermaid diagrams
+│   ├── pipelines/             # Pipeline specs
+│   └── data_models/           # FHIR, OMOP schemas
+├── pipelines/
+│   ├── fhir_pipeline/         # FHIR → OMOP ingestion
+│   ├── fhir_ingestion/        # (implementation)
+│   ├── genomics_pipeline/    # Variant processing
+│   ├── genomics/             # (implementation)
+│   ├── rna_seq/              # RNA-Seq QC, DESeq2
+│   └── rag/                  # RAG knowledge pipeline
+├── orchestration/
+│   └── airflow/
+│       └── dags/             # Airflow DAGs
+├── data_models/
+│   └── dbt/                  # dbt transformations
+├── data_quality/
+│   ├── great_expectations/   # GE expectation suites
+│   └── run_validation.py     # Validation runner
+├── ml/
+│   ├── rag_pipeline/        # RAG pipeline entry
+│   └── feature_repo/        # Feast definitions
+├── infrastructure/
+│   ├── docker/               # Dockerfile, docker-compose
+│   ├── terraform/            # GCP/AWS IaC
+│   └── kubernetes/           # K8s configs
+├── notebooks/                # Example notebooks
+│   ├── 01_pipeline_demo.ipynb
+│   ├── 02_analytics_example.ipynb
+│   └── 03_ml_training_example.ipynb
+├── tests/                    # pytest
+├── scripts/                  # Data generation, utilities
+└── config/                   # Pipeline configuration
 ```
 
-## Quick Start
+---
+
+## Data Pipelines
+
+| Pipeline | Description | Trigger |
+|----------|-------------|---------|
+| **FHIR Ingestion** | FHIR R4 → OMOP CDM → Delta/Parquet | Daily (Airflow) |
+| **Genomics** | VCF → annotation → Parquet | On-demand |
+| **RAG Index** | Guidelines → vector store | Weekly |
+| **RNA-Seq** | Snakemake: QC → DESeq2 → volcano | On-demand |
+
+---
+
+## Installation Instructions
 
 ### Prerequisites
 
-- Docker & Docker Compose
 - Python 3.10+
-- Apache Spark 3.x (optional, for local dev)
+- Docker & Docker Compose
+- (Optional) Apache Spark 3.x, R, Snakemake
 
-### Local Setup
+### Setup
 
 ```bash
-# Clone and enter
+# Clone
 git clone https://github.com/justin-mbca/biomedical-data-platform.git
 cd biomedical-data-platform
-
-# Start core services (Kafka, PostgreSQL, Airflow)
-cd infrastructure && docker-compose up -d
 
 # Install Python dependencies
 pip install -r requirements.txt
 
-# Run example pipeline
+# Generate sample data
+python scripts/generate_rna_seq_sample.py
+python scripts/generate_synthetic_oncology.py
+
+# Start infrastructure (Kafka, Postgres, Airflow)
+cd infrastructure/docker && docker-compose up -d
+# or: cd infrastructure && docker-compose up -d
+```
+
+---
+
+## Usage Examples
+
+### FHIR Ingestion
+
+```bash
+# Local bundle
+python -m pipelines.fhir_ingestion.run --source config/sample_fhir_bundle.json
+
+# HAPI FHIR server
+python -m pipelines.fhir_ingestion.run --source "https://hapi.fhir.org/baseR4/Patient?_count=10"
+
+# With config
 python -m pipelines.fhir_ingestion.run --config config/fhir_demo.yaml
 ```
 
-See [docs/setup.md](docs/setup.md) for detailed instructions.
-
-## Example Pipelines
-
-### 1. FHIR Ingestion Pipeline
-
-Ingests FHIR R4 resources from REST APIs or HL7v2, maps to OMOP CDM, and loads into Delta Lake.
+### Genomics Pipeline
 
 ```bash
-python -m pipelines.fhir_ingestion.run --source <fhir_endpoint>
+python -m pipelines.genomics.variant_pipeline --input variants.vcf.gz --output data/genomics
 ```
 
-### 2. Genomics Variant Processing
-
-Processes VCF files: QC → annotation → clinical significance → Parquet/Delta.
+### RAG Index
 
 ```bash
-python -m pipelines.genomics.variant_pipeline --input variants.vcf.gz
+python -m pipelines.rag.build_index --sources docs/guidelines/ --output data/rag_index
 ```
 
-### 3. AI RAG Knowledge Pipeline
-
-Indexes clinical guidelines and literature into a vector store for RAG-powered clinical decision support.
+### RNA-Seq (Snakemake)
 
 ```bash
-python -m pipelines.rag.build_index --sources docs/guidelines/
-```
-
-### 4. RNA-Seq Pipeline (Snakemake)
-
-QC → DESeq2 → annotation → volcano plot (from bioinformatics_pipeline).
-
-```bash
-python scripts/generate_rna_seq_sample.py  # Create sample data
 cd workflows/snakemake && snakemake -j 2
 ```
 
-### 5. Analytics Dashboard
-
-Streamlit dashboard for oncology/RWD analytics.
+### Analytics Dashboard
 
 ```bash
-python scripts/generate_synthetic_oncology.py  # Optional: synthetic data
 streamlit run apps/analytics_dashboard/app.py
 ```
 
-## Use Cases
+### Data Quality
 
-- **Precision medicine** — Integrate genomic variants with clinical EHR for risk stratification
-- **Clinical trials** — OMOP-based cohort definitions and feasibility queries
-- **Real-world evidence** — Synthetic and de-identified RWD analytics
-- **AI-assisted diagnosis** — RAG over guidelines for decision support
+```bash
+python data_quality/run_validation.py --data data/omop/person.parquet --suite person_suite
+# Suites: person_suite, schema_drift_suite, null_rate_suite, data_freshness_suite
+```
+
+---
+
+## Example Workflow
+
+1. **Ingest FHIR data** → `python -m pipelines.fhir_ingestion.run --source config/sample_fhir_bundle.json`
+2. **Validate** → `python data_quality/run_validation.py --data data/omop/person.parquet`
+3. **Transform** → `cd data_models/dbt && dbt run`
+4. **Explore** → Open `notebooks/02_analytics_example.ipynb`
+5. **Dashboard** → `streamlit run apps/analytics_dashboard/app.py`
+
+---
+
+## Data Quality & Testing
+
+### Great Expectations
+
+- **Schema drift** — `schema_drift_suite.json`
+- **Null rate validation** — `null_rate_suite.json`
+- **Data freshness** — `data_freshness_suite.json`
+
+### pytest
+
+```bash
+pytest tests/ -v
+```
+
+### dbt tests
+
+```bash
+cd data_models/dbt && dbt test
+```
+
+---
+
+## Infrastructure as Code
+
+- **Docker**: `infrastructure/docker/Dockerfile`, `docker-compose.yml`
+- **Terraform**: `infrastructure/terraform/` (GCP example)
+- **Kubernetes**: `infrastructure/kubernetes/airflow-deployment.yaml`
+
+---
+
+## Future Improvements
+
+- [ ] Full Spark-based FHIR ingestion (scale to millions of resources)
+- [ ] VEP/ANNOVAR integration for variant annotation
+- [ ] MLflow for model tracking
+- [ ] RBAC and audit logging for HIPAA compliance
+- [ ] Real-time streaming with Kafka Connect
+- [ ] Multi-cloud Terraform modules (AWS, Azure)
+
+---
 
 ## Documentation
 
-- [Architecture Overview](docs/architecture/README.md)
-- [Pipeline Specifications](docs/pipelines/README.md)
-- [Data Models (FHIR, OMOP)](docs/data_models/README.md)
+- [Architecture](architecture/system_architecture.md)
+- [Pipeline Specs](docs/pipelines/README.md)
+- [Data Models](docs/data_models/README.md)
 - [Setup Guide](docs/setup.md)
-- [Contributing](CONTRIBUTING.md)
+- [Source Repos](docs/source_repos.md)
+
+---
 
 ## Author
 
 **Justin Zhang** — [GitHub](https://github.com/justin-mbca) · [LinkedIn](https://www.linkedin.com/in/justinzh)
 
-Data Scientist, Computational Biologist, Software Developer  
-Winnipeg, MB Canada
+Data Scientist, Computational Biologist, Software Developer · Winnipeg, MB Canada
+
+---
 
 ## License
 

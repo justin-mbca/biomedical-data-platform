@@ -1,0 +1,44 @@
+# Biomedical Data Platform — Airflow on Kubernetes
+# Example deployment (adjust for your cluster)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-webserver
+  labels:
+    app: biomedical-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+  template:
+    metadata:
+      labels:
+        app: airflow
+    spec:
+      containers:
+        - name: airflow
+          image: apache/airflow:2.7.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: AIRFLOW__CORE__EXECUTOR
+              value: "KubernetesExecutor"
+            - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-db-secret
+                  key: connection
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: airflow-webserver
+spec:
+  selector:
+    app: airflow
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: LoadBalancer

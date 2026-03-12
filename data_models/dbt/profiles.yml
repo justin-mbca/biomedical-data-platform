@@ -1,0 +1,10 @@
+# Copy to ~/.dbt/profiles.yml
+default:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ../../data/omop.duckdb
+    prod:
+      type: duckdb
+      path: /data/omop.duckdb

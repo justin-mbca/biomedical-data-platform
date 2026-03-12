@@ -1,0 +1,21 @@
+{
+  "expectation_suite_name": "null_rate_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {"column": "person_id"}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {"column": "person_source_value"}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "person_id",
+        "regex": "^[a-zA-Z0-9_-]+$"
+      }
+    }
+  ],
+  "meta": {"description": "Null rate and format validation"}
+}

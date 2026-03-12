@@ -1,5 +1,5 @@
-# Biomedical Data Platform — Local Development Stack
-# Runs Kafka, PostgreSQL, Airflow, and pipeline services
+# Biomedical Data Platform — Docker Compose
+# Production-style stack: Kafka, PostgreSQL, Airflow
 
 version: "3.8"
 
@@ -41,25 +41,12 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      _AIRFLOW_WWW_USER_USERNAME: admin
-      _AIRFLOW_WWW_USER_PASSWORD: admin
     ports:
       - "8080:8080"
     command: webserver
     volumes:
-      - ../orchestration/airflow/dags:/opt/airflow/dags
-      - ../config:/opt/airflow/config
-
-  pipeline-runner:
-    build:
-      context: ..
-      dockerfile: infrastructure/Dockerfile
-    depends_on: [kafka, postgres]
-    environment:
-      FHIR_ENDPOINT: "http://host.docker.internal:8080/fhir"
-      OMOP_OUTPUT_PATH: "/data/omop"
-    volumes:
-      - ../data:/data
+      - ../../orchestration/airflow/dags:/opt/airflow/dags
+      - ../../config:/opt/airflow/config
 
 volumes:
   postgres_data:
