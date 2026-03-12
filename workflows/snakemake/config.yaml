@@ -1,0 +1,6 @@
+# Snakemake RNA-Seq config (from bioinformatics_pipeline)
+counts: data/sample_counts.csv
+gene_annotation: data/gene_annotation.csv
+# Run: python scripts/generate_rna_seq_sample.py to create sample data
+alpha: 0.05
+log2fc_threshold: 1.0

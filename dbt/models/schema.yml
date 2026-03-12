@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: stg_person
+    description: Standardized person table from OMOP raw
+    columns:
+      - name: person_id
+        description: Unique person identifier
+      - name: gender_concept_id
+        description: OMOP gender concept

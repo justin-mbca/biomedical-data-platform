@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Data
+data/
+*.parquet
+*.delta
+qdrant_data/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+
+# Great Expectations
+great_expectations/uncommitted/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Env
+.env
+.env.local
+
+# Logs
+*.log

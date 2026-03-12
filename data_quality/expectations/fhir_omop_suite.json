@@ -1,0 +1,28 @@
+{
+  "data_asset_name": "person",
+  "expectation_suite_name": "fhir_omop_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {"column": "person_id"}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "gender_concept_id",
+        "value_set": [8507, 8532, 8551, 8570]
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "year_of_birth",
+        "min_value": 1900,
+        "max_value": 2030
+      }
+    }
+  ],
+  "meta": {
+    "great_expectations_version": "0.18.0"
+  }
+}

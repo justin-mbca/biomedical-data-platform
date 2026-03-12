@@ -1,0 +1,8 @@
+project: biomedical_data_platform
+registry: data/feast/registry.db
+provider: local
+online_store:
+  type: sqlite
+  path: data/feast/online_store.db
+offline_store:
+  type: file

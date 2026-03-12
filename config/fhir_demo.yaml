@@ -1,0 +1,18 @@
+# Example FHIR ingestion configuration
+source:
+  type: fhir
+  # Use HAPI public server, or local file:
+  endpoint: "https://hapi.fhir.org/baseR4/Patient?_count=5"
+  # Local demo: config/sample_fhir_bundle.json
+
+mapping:
+  omop_version: "5.4"
+  source_system: "fhir_demo"
+  
+output:
+  format: delta  # or parquet
+  path: "s3://data/omop"  # or file:///data/omop
+  write_mode: append
+
+quality:
+  profile: expectations/fhir_omop_suite

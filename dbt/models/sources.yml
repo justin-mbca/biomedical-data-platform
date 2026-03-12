@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: omop_raw
+    description: Raw OMOP CDM tables from FHIR ingestion
+    tables:
+      - name: person
+      - name: condition_occurrence
+      - name: measurement

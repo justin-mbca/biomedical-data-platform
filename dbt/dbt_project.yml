@@ -1,0 +1,20 @@
+name: 'biomedical_data_platform'
+version: '0.1.0'
+config-version: 2
+profile: 'default'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  biomedical_data_platform:
+    +materialized: view
+    staging:
+      +materialized: view
+      +schema: staging

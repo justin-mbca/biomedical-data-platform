@@ -1,0 +1,44 @@
+# Snakemake RNA-Seq pipeline (from bioinformatics_pipeline)
+# QC → DESeq2 → annotation → volcano plot
+
+configfile: "config.yaml"
+
+rule all:
+    input:
+        "results/annotated_results.csv",
+        "results/volcano_plot.png"
+
+rule preprocess_qc:
+    input:
+        counts="data/sample_counts.csv"  # Create via: python scripts/generate_rna_seq_sample.py
+    output:
+        cleaned="results/counts_for_deseq2.csv",
+        plot="results/library_sizes.png"
+    script:
+        "../../pipelines/rna_seq/preprocess_qc.py"
+
+rule deseq2:
+    input:
+        counts="results/counts_for_deseq2.csv"
+    output:
+        results="results/deseq2_results.csv",
+        maplot="results/deseq2_MAplot.png"
+    script:
+        "../../pipelines/rna_seq/deseq2_analysis.R"
+
+rule annotate:
+    input:
+        results="results/deseq2_results.csv",
+        annotation=config["gene_annotation"]
+    output:
+        annotated="results/annotated_results.csv"
+    script:
+        "../../pipelines/rna_seq/annotate_results.py"
+
+rule volcano_plot:
+    input:
+        annotated="results/annotated_results.csv"
+    output:
+        plot="results/volcano_plot.png"
+    script:
+        "../../pipelines/rna_seq/volcano_plot.py"

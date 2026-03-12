@@ -1,0 +1,12 @@
+# dbt profiles — copy to ~/.dbt/profiles.yml or set DBT_PROFILES_DIR
+# Example for DuckDB (local analytics)
+
+default:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: data/omop.duckdb
+    prod:
+      type: duckdb
+      path: /data/omop.duckdb

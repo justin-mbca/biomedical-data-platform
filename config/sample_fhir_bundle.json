@@ -1,0 +1,33 @@
+{
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "example-1",
+        "gender": "female",
+        "birthDate": "1985-03-20",
+        "name": [{"given": ["Jane"], "family": "Doe"}]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "example-2",
+        "gender": "male",
+        "birthDate": "1972-11-05",
+        "name": [{"given": ["John"], "family": "Smith"}]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-1",
+        "subject": {"reference": "Patient/example-1"},
+        "code": {"coding": [{"system": "http://snomed.info/sct", "code": "44054006", "display": "Diabetes mellitus type 2"}]},
+        "onsetDateTime": "2020-05-01"
+      }
+    }
+  ]
+}
